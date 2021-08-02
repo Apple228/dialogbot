@@ -121,3 +121,62 @@ class Database:
         sql = "SELECT telegram_id FROM Users"
         return await self.execute(sql, fetch=True)
 
+
+##############################################################################################################################
+
+class save_answer:
+
+    def __init__(self):
+        self.pool: Union[Pool, None] = None
+
+    async def create_answer(self):
+        self.pool = await asyncpg.create_pool(
+            user=config.DB_USER,
+            password=config.DB_PASS,
+            host=config.DB_HOST,
+            database=config.DB_NAME
+        )
+
+    async def execute(self, command, *args,
+                      fetch: bool = False,  # этот фетч означает, что хотим забрать все данные
+                      fetchval: bool = False,  # доставать одно значение
+                      fetchrow: bool = False,  # данные в одной строке
+                      execute: bool = False  # никакие данные возвращать не надо
+                      ):
+
+        async with self.pool.acquire() as connection:
+            connection: Connection
+            async with connection.transaction():
+                if fetch:
+                    result = await connection.fetch(command, *args)
+                elif fetchval:
+                    result = await connection.fetchval(command, *args)
+                elif fetchrow:
+                    result = await connection.fetchrow(command, *args)
+                elif execute:
+                    result = await connection.execute(command, *args)
+            return result
+
+    async def create_table_answer(self):
+        sql = """
+        CREATE TABLE IF NOT EXISTS users_answer (
+        id SERIAL PRIMARY KEY,
+        username varchar(55) NULL,
+        telegram_id BIGINT NOT NULL UNIQUE,
+        from_bot varchar(250),
+        from_user varchar(250)
+        );
+        """
+        await self.execute(sql, execute=True)
+
+    @staticmethod
+    def format_args(sql, parameters: dict):
+        sql += " AND ".join([
+            f"{item} = ${num}" for num, item in enumerate(parameters.keys(),
+                                                          start=1)
+        ])
+        return sql, tuple(parameters.values())
+
+    async def add_line(self, username, telegram_id, from_bot, from_user):
+        sql = "INSERT INTO users_answer (username, telegram_id, from_bot, from_user) VALUES($1, $2, $3, $4) returning *"
+        return await self.execute(sql, username, telegram_id, from_bot, from_user, fetchrow=True)
