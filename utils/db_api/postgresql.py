@@ -162,9 +162,9 @@ class save_answer:
         CREATE TABLE IF NOT EXISTS users_answer (
         id SERIAL PRIMARY KEY,
         username varchar(55) NULL,
-        telegram_id BIGINT NOT NULL UNIQUE,
-        from_bot varchar(250),
-        from_user varchar(250)
+        from_user varchar(250),
+        from_bot varchar(250)
+
         );
         """
         await self.execute(sql, execute=True)
@@ -177,6 +177,6 @@ class save_answer:
         ])
         return sql, tuple(parameters.values())
 
-    async def add_line(self, username, telegram_id, from_bot, from_user):
-        sql = "INSERT INTO users_answer (username, telegram_id, from_bot, from_user) VALUES($1, $2, $3, $4) returning *"
-        return await self.execute(sql, username, telegram_id, from_bot, from_user, fetchrow=True)
+    async def add_line(self, username,  from_bot, from_user):
+        sql = "INSERT INTO users_answer (username,  from_bot, from_user) VALUES($1, $2, $3) returning *"
+        return await self.execute(sql, username,  from_bot, from_user, fetchrow=True)

@@ -4,13 +4,14 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.builtin import CommandStart
 from aiogram.types import CallbackQuery
 
+from keyboards.default.final import delete
 from keyboards.inline.sex import sex
 from loader import dp, db
 
 
 @dp.message_handler(CommandStart())
 async def bot_start(message: types.Message, state: FSMContext):
-    await message.answer('Привет, Как тебя зовут?')
+    await message.answer('Привет, Как тебя зовут?',reply_markup=delete)
     await state.set_state("set_name")
 
 
