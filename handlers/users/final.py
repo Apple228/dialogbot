@@ -14,8 +14,12 @@ async def answer_final(message: types.Message):
 
 
 @dp.message_handler(text="Давай, текстом удобнее :)")
-async def answer_final(message: types.Message, state: FSMContext):
-    await state.set_state("Final")
+async def answer_final(message: types.Message):
+    await message.answer("Продолжение следует...")
+    await message.answer(
+        "Надеемся тебе понравился этот небольшой чат, хочешь узнать первым когда будет доступна полная версия?",
+        reply_markup=final)
+
 
 
 @dp.message_handler(state="Final")

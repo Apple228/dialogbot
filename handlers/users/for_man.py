@@ -6,6 +6,7 @@ from keyboards.default.answer_for_man import answer_men_1, answer_men_2, answer_
     answer_men_11_voice, answer_men_12_voice, answer_men_13_voice, answer_men_14_15_voice, answer_men_5_6_7, \
     answer_men_6, answer_men_7, answer_men_8, answer_men_10_11, answer_men_9, answer_men_12_13, answer_men_14, \
     answer_men_15, answer_men_16, answer_men_17
+from keyboards.default.final import final
 
 from loader import dp, db, sa
 
@@ -24,7 +25,7 @@ async def answer_men(message: types.Message):
     await message.answer(text="Ну конечно! Наше с тобой знакомство! Разве это не удача?", reply_markup=answer_men_2)
     await sa.add_line(username=message.from_user.username,
                       from_bot="Ну конечно! Наше с тобой знакомство! Разве это не удача?",
-                      from_user="Привет:) Случилось что-то хорошее?")
+                      from_user="Привет:) Случилось что-то хорошее?")
 
 
 @dp.message_handler(text="Возможно:) тогда расскажи мне о себе?")
@@ -345,4 +346,7 @@ async def answer_men(message: types.Message, state: FSMContext):
     await sa.add_line(username=message.from_user.username,
                       from_user="Мне бы хотелось больше путешествовать :)",
                       from_bot="Хороший ответ :) Я бы тоже хотела увидеть больше")
-    await state.set_state("Final")
+    await message.answer("Продолжение следует...")
+    await message.answer(
+        "Надеемся тебе понравился этот небольшой чат, хочешь узнать первым когда будет доступна полная версия?",
+        reply_markup=final)

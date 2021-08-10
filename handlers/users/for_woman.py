@@ -7,7 +7,7 @@ from keyboards.default.answer_for_woman import answer_women_1, answer_women_2, a
     answer_women_10_voice, answer_women_11_voice, answer_women_12_voice, answer_women_13_voice, \
     answer_women_14_15_voice, answer_women_5_6_7, answer_women_6, answer_women_7, answer_women_8, answer_women_9, \
     answer_women_10_11, answer_women_12_13, answer_women_14, answer_women_16, answer_women_17, answer_women_15
-from keyboards.default.final import delete
+from keyboards.default.final import delete, final
 from loader import dp, db, sa
 
 
@@ -213,11 +213,11 @@ async def answer_men(message: types.Message):
 
 @dp.message_handler(text="Я подумаю :) Но что там с фактами, Париж?")
 async def answer_men(message: types.Message):
-    await message.answer(text="Нет, я не прыгала с парашютом, а в Париже действительно жила.",
+    await message.answer(text="Нет, я не прыгал с парашютом, а в Париже действительно жил.",
                          reply_markup=answer_women_9)
     await sa.add_line(username=message.from_user.username,
                       from_user="Я подумаю :) Но что там с фактами, Париж?",
-                      from_bot="Нет, я не прыгала с парашютом, а в Париже действительно жила")
+                      from_bot="Нет, я не прыгал с парашютом, а в Париже действительно жил")
 
 
 @dp.message_handler(text="Ого, очень круто! Расскажи мне про Париж?")
@@ -325,4 +325,8 @@ async def answer_men(message: types.Message, state: FSMContext):
     await sa.add_line(username=message.from_user.username,
                       from_user="Мне бы хотелось больше путешествовать :)",
                       from_bot="Хороший ответ :) Я бы тоже хотел увидеть больше")
-    await state.set_state("Final")
+    await message.answer("Продолжение следует...")
+    await message.answer(
+        "Надеемся тебе понравился этот небольшой чат, хочешь узнать первым когда будет доступна полная версия?",
+        reply_markup=final)
+
